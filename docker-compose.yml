@@ -1,0 +1,21 @@
+version: '3.6'
+services:
+  fluentd:
+    image: fluent/fluentd:v1.11.0-1.0
+    ports:
+      - 127.0.0.1:24224:24224
+      - 127.0.0.1:24224:24224/udp
+    volumes:
+      - ./conf/fluentd.conf:/fluentd/etc/fluentd.conf
+      - ./tmp/fluentd:/fluentd/log
+    environment:
+      FLUENTD_CONF: fluentd.conf
+
+  server:
+    image: alextanhongpin/go-fluent
+    links:
+      - fluentd
+    logging:
+      driver: fluentd
+    ports:
+      - 127.0.0.1:8080:8080
